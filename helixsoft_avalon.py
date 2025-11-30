@@ -232,8 +232,8 @@ class ClinicalDataValidator:
     def _validate_filename_pattern(self, filename, status_queue=None):
         pattern = r'^CLINICALDATA\d{14}\.CSV$'
         # TEMPORARILY BREAK THE CODE FOR RED STAGE
-        # is_valid = re.match(pattern, filename, re.IGNORECASE) is not None
-        is_valid = False  # Always return False to make tests fail
+        is_valid = re.match(pattern, filename, re.IGNORECASE) is not None
+        # is_valid = False  # Always return False to make tests fail
         if status_queue:
             if is_valid:
                 status_queue.put(("✓ Filename pattern valid", "success"))
