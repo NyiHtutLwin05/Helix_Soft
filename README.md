@@ -211,12 +211,7 @@ ErrorHandler             # Decorator-based error management
 clinical-data-processor/
 ├── helix_softavalon.py          # Main application
 ├── test_validator.py            # Validation tests
-├── test_error_handler.py        # Error handling tests
-├── requirements.txt             # Dependencies
 ├── README.md                    # This file
-└── docs/                        # Documentation
-    ├── nielsens_heuristics.pdf
-    └── schneiderman_rules.pdf
 ```
 
 
