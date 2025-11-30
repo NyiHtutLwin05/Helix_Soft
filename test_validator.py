@@ -1,10 +1,27 @@
+import pytest
 from helixsoft_avalon import ClinicalDataValidator
 
 
-def test_valid_filename_should_pass():
-    """RED: This might fail if pattern is strict"""
-    validator = ClinicalDataValidator("/tmp", "/tmp", "/tmp")
+class TestClinicalDataValidator:
+    def test_multiple_filename_patterns(self):
+        """REFACTOR: Test various filename patterns"""
+        validator = ClinicalDataValidator("/tmp", "/tmp", "/tmp")
 
-    result = validator._validate_filename_pattern(
-        "CLINICALDATA20251111083303.csv")
-    assert result == True  # ❌ FAILS because _validate_filename_pattern method returns False
+        # Test valid patterns
+        valid_files = [
+            "CLINICALDATA20251111083303.csv",
+            "CLINICALDATA20250101000000.CSV"
+        ]
+
+        # Test invalid patterns
+        invalid_files = [
+            "wrong_name.csv",
+            "DATA20251111083303.csv",
+            "CLINICALDATA20251111.csv"  # too short
+        ]
+
+        for file in valid_files:
+            assert validator._validate_filename_pattern(file) == True
+
+        for file in invalid_files:
+            assert validator._validate_filename_pattern(file) == False
