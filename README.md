@@ -36,15 +36,6 @@ A secure and user-friendly desktop application for managing clinical trial data 
 ### Test-Driven Development (TDD) Approach
 Our development followed the Red-Green-Refactor cycle:
 
-#### 🔴 RED Stage
-```python
-# Example failing test
-def test_filename_validation_should_fail():
-    validator = ClinicalDataValidator("/tmp", "/tmp", "/tmp")
-    result = validator._validate_filename_pattern("CLINICALDATA20251111083303.csv")
-    assert result == True  # Initially fails when code is broken
-
-
 ### Nielsen's 10 Usability Heuristics Applied
 ✅ Visibility of System Status
 
@@ -196,3 +187,36 @@ Decorator Pattern: Enhanced error handling with timestamp, GUID, and context
 Factory Pattern: Error handler creation
 
 Observer Pattern: Event-driven UI updates
+
+
+#### 🔴 RED Stage
+```python
+# Example failing test
+def test_filename_validation_should_fail():
+    validator = ClinicalDataValidator("/tmp", "/tmp", "/tmp")
+    result = validator._validate_filename_pattern("CLINICALDATA20251111083303.csv")
+    assert result == True  # Initially fails when code is broken
+```
+
+#### Core Components
+```
+ClinicalDataProcessor    # FTP operations and file management
+ClinicalDataValidator    # Validation logic and error handling
+ClinicalDataGUI          # Modern Tkinter interface
+ErrorHandler             # Decorator-based error management
+```
+
+####  Project Structure
+```
+clinical-data-processor/
+├── helix_softavalon.py          # Main application
+├── test_validator.py            # Validation tests
+├── test_error_handler.py        # Error handling tests
+├── requirements.txt             # Dependencies
+├── README.md                    # This file
+└── docs/                        # Documentation
+    ├── nielsens_heuristics.pdf
+    └── schneiderman_rules.pdf
+```
+
+
