@@ -5,8 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  schedule:
-    - cron: '0 2 * * *'
+  
 
 env:
   DOCKER_IMAGE_NAME: helixsoft-clinical-processor
