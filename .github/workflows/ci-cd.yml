@@ -113,8 +113,10 @@ jobs:
 
       - name: Test Docker image
         run: |
-          docker pull ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
-          docker run --rm -e DISPLAY= ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest python -c "print('Docker test passed')"
+          # Convert username to lowercase for Docker registry
+          LOWER_USERNAME=$(echo "${{ env.GITHUB_USERNAME }}" | tr '[:upper:]' '[:lower:]')
+          docker pull ${{ env.REGISTRY }}/$LOWER_USERNAME/${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker run --rm -e DISPLAY= ${{ env.REGISTRY }}/$LOWER_USERNAME/${{ env.DOCKER_IMAGE_NAME }}:latest python -c "print('Docker test passed')"
 
       - name: Security scan
         uses: anchore/scan-action@v3
