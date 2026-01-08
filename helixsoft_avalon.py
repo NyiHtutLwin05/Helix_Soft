@@ -529,7 +529,7 @@ class ClinicalDataGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Clinical Data Processor - Secure File Management")
-        self.root.geometry("1000x700")
+        self.root.geometry("700x500")
         self.root.minsize(900, 600)
         self.root.configure(bg='#f5f5f5')
 
@@ -545,7 +545,7 @@ class ClinicalDataGUI:
         self.selected_file = None
 
         # Default settings
-        self.ftp_host = tk.StringVar(value="localhost")
+        self.ftp_host = tk.StringVar(value="host.docker.internal")
         self.ftp_user = tk.StringVar(value="nhl")
         self.ftp_pass = tk.StringVar(value="123")
         self.download_dir = tk.StringVar(
@@ -708,21 +708,21 @@ class ClinicalDataGUI:
 
         # Primary actions - arranged horizontally
         self.validate_btn = ttk.Button(
-            action_frame, text="✅ Validate", command=self.validate_file, state=tk.DISABLED, width=12)
+            action_frame, text="Validate", command=self.validate_file, state=tk.DISABLED, width=12)
         self.validate_btn.pack(side=tk.LEFT, padx=(0, 5))
 
         self.process_btn = ttk.Button(
-            action_frame, text="⚙️ Process", command=self.process_file, state=tk.DISABLED, width=12)
+            action_frame, text=" Process", command=self.process_file, state=tk.DISABLED, width=12)
         self.process_btn.pack(side=tk.LEFT, padx=(0, 5))
 
         self.download_btn = ttk.Button(
-            action_frame, text="📥 Download", command=self.download_file, state=tk.DISABLED, width=12)
+            action_frame, text=" Download", command=self.download_file, state=tk.DISABLED, width=12)
         self.download_btn.pack(side=tk.LEFT, padx=(0, 5))
 
         # Secondary actions
-        ttk.Button(action_frame, text="🔄 Refresh", command=self.refresh_files,
+        ttk.Button(action_frame, text="Refresh", command=self.refresh_files,
                    width=10).pack(side=tk.LEFT, padx=(0, 5))
-        ttk.Button(action_frame, text="📊 Stats",
+        ttk.Button(action_frame, text="Stats",
                    command=self.show_stats, width=8).pack(side=tk.LEFT)
 
         # Right Panel - Logs and Monitoring
@@ -735,7 +735,7 @@ class ClinicalDataGUI:
 
         # Activity Log Tab
         activity_frame = ttk.Frame(log_notebook, padding="5")
-        log_notebook.add(activity_frame, text="📋 Activity")
+        log_notebook.add(activity_frame, text="Activity")
 
         self.log_text = scrolledtext.ScrolledText(activity_frame, height=8, wrap=tk.WORD,
                                                   font=('Consolas', 8), bg='#f8f9fa')
@@ -743,7 +743,7 @@ class ClinicalDataGUI:
 
         # Valid Files Log Tab
         valid_frame = ttk.Frame(log_notebook, padding="5")
-        log_notebook.add(valid_frame, text="✅ Valid")
+        log_notebook.add(valid_frame, text="Valid")
 
         self.valid_text = scrolledtext.ScrolledText(valid_frame, height=8, wrap=tk.WORD,
                                                     font=('Consolas', 8), bg='#f8f9fa')
@@ -751,7 +751,7 @@ class ClinicalDataGUI:
 
         # Invalid Files Log Tab
         invalid_frame = ttk.Frame(log_notebook, padding="5")
-        log_notebook.add(invalid_frame, text="❌ Invalid")
+        log_notebook.add(invalid_frame, text=" Invalid")
 
         self.invalid_text = scrolledtext.ScrolledText(invalid_frame, height=8, wrap=tk.WORD,
                                                       font=('Consolas', 8), bg='#f8f9fa')
@@ -759,7 +759,7 @@ class ClinicalDataGUI:
 
         # Error Log Tab
         error_frame = ttk.Frame(log_notebook, padding="5")
-        log_notebook.add(error_frame, text="🐛 Errors")
+        log_notebook.add(error_frame, text=" Errors")
 
         self.error_text = scrolledtext.ScrolledText(error_frame, height=8, wrap=tk.WORD,
                                                     font=('Consolas', 8), bg='#f8f9fa')
@@ -776,10 +776,7 @@ class ClinicalDataGUI:
         # Utility buttons with Error Log button
         util_buttons = ttk.Frame(bottom_bar)
         util_buttons.pack(side=tk.RIGHT)
-
-        ttk.Button(util_buttons, text="🐛 Error Log",
-                   command=self.open_error_log, width=10).pack(side=tk.LEFT, padx=3)
-        ttk.Button(util_buttons, text="🧹 Clear Logs",
+        ttk.Button(util_buttons, text="Clear Logs",
                    command=self.clear_all_logs, width=10).pack(side=tk.LEFT, padx=3)
         ttk.Button(util_buttons, text="ℹ️ Help",
                    command=self.show_help, width=8).pack(side=tk.LEFT, padx=3)
