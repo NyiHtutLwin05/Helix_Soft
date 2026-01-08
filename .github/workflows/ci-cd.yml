@@ -126,30 +126,32 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    # Optional: Only deploy on tags or manual trigger
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Set up SSH for deployment
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    - name: Add host to known_hosts
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
     
     - name: Deploy to server
       run: |
-        ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
           # Pull the latest image
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ env.GITHUB_USERNAME }} --password-stdin
           docker pull ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
           
           # Stop and remove old container
-          docker stop ${{ env.DOCKER_IMAGE_NAME }} || true
-          docker rm ${{ env.DOCKER_IMAGE_NAME }} || true
+          docker stop ${{ env.DOCKER_IMAGE_NAME }} 2>/dev/null || true
+          docker rm ${{ env.DOCKER_IMAGE_NAME }} 2>/dev/null || true
           
           # Run new container
           docker run -d \
@@ -159,8 +161,9 @@ jobs:
             -e QT_X11_NO_MITSHM=1 \
             -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
             ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+          
+          echo "✅ Deployment completed"
         EOF
-      # Note: For production, you might want to use docker-compose or k8s manifests
 
   notify:
     needs: [test, build-and-push]
