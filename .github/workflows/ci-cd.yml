@@ -57,18 +57,7 @@ jobs:
 
       - name: Import test
         run: |
-          python -c "
-          try:
-              import tkinter
-              import ftplib
-              import csv
-              import uuid
-              from datetime import datetime
-              print('All imports successful')
-          except Exception as e:
-              print(f'Import error: {e}')
-              exit(1)
-                  "
+          python -c "import tkinter; import ftplib; import csv; import uuid; from datetime import datetime; print('All imports successful')"
 
   build-and-push:
     needs: test
