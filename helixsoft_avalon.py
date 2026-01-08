@@ -11,6 +11,38 @@ import threading
 import queue
 import time
 import random
+import requests
+import json
+
+
+# =============================================
+# UUID API INTEGRATION
+# =============================================
+
+class UUIDGenerator:
+    """Generates UUIDs using external API with fallback to local generation"""
+    def __init__(self):
+        self.api_url = "https://www.uuidtools.com/api/generate/v4"
+    
+    def get_uuid(self):
+        """Get UUID from API or fallback to local generation"""
+        try:
+            # Try API first
+            response = requests.get(self.api_url, timeout=5)
+            if response.status_code == 200:
+                # Parse JSON response - API returns a list of UUIDs
+                uuids = json.loads(response.text)
+                if uuids and len(uuids) > 0:
+                    return uuids[0]
+                else:
+                    raise ValueError("API returned empty response")
+            else:
+                raise Exception(f"API Error: {response.status_code}")
+        except Exception as e:
+            # Fallback to local UUID generation if API fails
+            print(f"UUID API failed, using fallback: {e}")
+            import uuid as local_uuid
+            return str(local_uuid.uuid4())
 
 # =============================================
 # DECORATOR PATTERN IMPLEMENTATION for Error Handling
@@ -51,12 +83,20 @@ class TimestampErrorDecorator(ErrorHandlerDecorator):
 
 
 class GUIDErrorDecorator(ErrorHandlerDecorator):
-    """Adds GUID to error messages"""
-
+    """Adds GUID to error messages using external API"""
+    
+    def __init__(self, error_handler):
+        super().__init__(error_handler)
+        self.uuid_generator = UUIDGenerator()
+    
     def handle_error(self, error_msg, filename=""):
-        guid = str(uuid.uuid4())
-        base_error = self._error_handler.handle_error(error_msg, filename)
-        return f"{base_error} | GUID: {guid}"
+        try:
+            guid = self.uuid_generator.get_uuid()
+            base_error = self._error_handler.handle_error(error_msg, filename)
+            return f"{base_error} | UUID: {guid}"
+        except Exception as e:
+            print(f"Failed to generate GUID: {e}")
+            return self._error_handler.handle_error(error_msg, filename)
 
 
 class FileContextErrorDecorator(ErrorHandlerDecorator):
@@ -218,12 +258,16 @@ class ClinicalDataValidator:
             with open(error_log_path, "a", encoding='utf-8') as f:
                 f.write(log_entry)
 
-            # Also print to console for debugging
-            print(f"Error logged: {log_entry.strip()}")
+            # Print to console with UUID source info
+            if "UUID:" in log_entry:
+                print(f"Error logged with UUID (API/Fallback): {log_entry.strip()}")
+            else:
+                print(f"Error logged (No UUID): {log_entry.strip()}")
 
-            # If there's a way to notify the GUI, you could add a callback here
-            # For now, we'll rely on manual refresh or periodic updates
-
+            # Update error log display in GUI
+            if hasattr(self, '_gui_callback'):
+                self._gui_callback("error_log_updated")
+                
             return log_entry
         except Exception as e:
             print(f"Failed to log error: {e}")
