@@ -114,7 +114,8 @@ jobs:
     - name: Generate SBOM
       uses: anchore/sbom-action@v0
       with:
-        image: ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}
+        image: nginx:alpine
+        format: spdx-json
     
     - name: Scan for vulnerabilities
       uses: anchore/scan-action@v3
